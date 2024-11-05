@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: ChangeNotifierProvider(
-        create: (context) => ExchangeRateController('your-token-here'),
+        create: (context) => ExchangeRateController()..login(), // Trigger login on startup
         child: const ExchangeRateView(),
       ),
     );

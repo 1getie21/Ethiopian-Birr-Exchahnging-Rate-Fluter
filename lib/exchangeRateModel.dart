@@ -3,12 +3,9 @@ import 'package:http/http.dart' as http;
 
 // Model to handle exchange rate data
 class ExchangeRateModel {
-  final String token;
-
-  ExchangeRateModel({required this.token});
-
   static const String liveUrl = "http://10.10.10.231:5000/v1";
 
+  // Login method to fetch token
   Future<String?> login() async {
     final auth = {
       "password": "test123",
@@ -25,13 +22,14 @@ class ExchangeRateModel {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return data['token'];
+      return data['token'];  // Return the token
     } else {
       return null;
     }
   }
 
-  Future<List<dynamic>> fetchExchangeRates() async {
+  // Fetch exchange rates using the dynamic token
+  Future<List<dynamic>> fetchExchangeRates(String token) async {
     final auth = {
       "request": {
         "bank_id": ["all"],
@@ -44,7 +42,7 @@ class ExchangeRateModel {
       Uri.parse('$liveUrl/forex/latest'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,
+        'Authorization': token,  // Use the token dynamically
       },
       body: json.encode(auth),
     );
@@ -56,11 +54,12 @@ class ExchangeRateModel {
     }
   }
 
-  Future<List<dynamic>> fetchBestExchangeRates() async {
+  // Fetch best exchange rates using the dynamic token
+  Future<List<dynamic>> fetchBestExchangeRates(String token) async {
     final response = await http.get(
       Uri.parse('$liveUrl/forex/best'),
       headers: {
-        'Authorization': token,
+        'Authorization': token,  // Use the token dynamically
       },
     );
 

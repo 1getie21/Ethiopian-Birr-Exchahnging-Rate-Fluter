@@ -7,28 +7,37 @@ class ExchangeRateController extends ChangeNotifier {
 
   List<dynamic> allBankExchangeRates = [];
   List<dynamic> allBanksBestExchangeRates = [];
+  String? token;
 
-  ExchangeRateController(String token) {
-    _model = ExchangeRateModel(token: token);
+  // Initialize with login method
+  ExchangeRateController() {
+    _model = ExchangeRateModel();
   }
 
-  Future<void> fetchExchangeRates() async {
-    try {
-      allBankExchangeRates = await _model.fetchExchangeRates();
-      allBanksBestExchangeRates = await _model.fetchBestExchangeRates();
-      notifyListeners();
-    } catch (e) {
-      Fluttertoast.showToast(msg: "Error: $e");
-    }
-  }
-
+  // Fetch the token and update the model
   Future<void> login() async {
     final token = await _model.login();
     if (token != null) {
-      _model = ExchangeRateModel(token: token);
-      await fetchExchangeRates();
+      this.token = token;  // Store the token in the controller
+      notifyListeners();
+      await fetchExchangeRates();  // Fetch exchange rates after login
     } else {
       Fluttertoast.showToast(msg: "Login failed");
+    }
+  }
+
+  Future<void> fetchExchangeRates() async {
+    if (token == null) {
+      Fluttertoast.showToast(msg: "Not logged in");
+      return;
+    }
+
+    try {
+      allBankExchangeRates = await _model.fetchExchangeRates(token!);
+      allBanksBestExchangeRates = await _model.fetchBestExchangeRates(token!);
+      notifyListeners();
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error: $e");
     }
   }
 }

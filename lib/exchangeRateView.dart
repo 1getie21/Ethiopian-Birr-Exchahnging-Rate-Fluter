@@ -13,6 +13,10 @@ class ExchangeRateView extends StatelessWidget {
       ),
       body: Consumer<ExchangeRateController>(
         builder: (context, controller, child) {
+          if (controller.token == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return ListView(
             children: [
               const Padding(
@@ -30,8 +34,8 @@ class ExchangeRateView extends StatelessWidget {
                     DataColumn(label: Text('Selling')),
                     DataColumn(label: Text('Bank')),
                   ],
-                  rows: controller.allBanksBestExchangeRates
-                      .map<DataRow>((item) {
+                  rows:
+                      controller.allBanksBestExchangeRates.map<DataRow>((item) {
                     return DataRow(cells: [
                       DataCell(Text(item['currency'])),
                       DataCell(Text(item['buying']['value'].toString())),
@@ -72,7 +76,8 @@ class ExchangeRateView extends StatelessWidget {
                                 Text(
                                   '${item['bank_name']} (${item['bank_id']}) Transaction Rate',
                                   style: const TextStyle(
-                                      fontSize: 18, fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -86,7 +91,8 @@ class ExchangeRateView extends StatelessWidget {
                               ],
                               rows: (item['rate'] as List).map<DataRow>((rate) {
                                 final spread =
-                                (rate['selling'] - rate['buying']).toString();
+                                    (rate['selling'] - rate['buying'])
+                                        .toString();
                                 return DataRow(cells: [
                                   DataCell(Text(rate['base'])),
                                   DataCell(Text(rate['buying'].toString())),
