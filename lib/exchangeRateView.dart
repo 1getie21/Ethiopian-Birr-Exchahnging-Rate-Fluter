@@ -7,51 +7,57 @@ class ExchangeRateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Exchange Rates'),
-      ),
-      body: Consumer<ExchangeRateController>(
-        builder: (context, controller, child) {
-          if (controller.token == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return DefaultTabController(
+      length: 2, // Number of tabs
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Exchange Rates'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Best Rates'),
+              Tab(text: 'All Banks Rates'),
+            ],
+          ),
+        ),
+        body: Consumer<ExchangeRateController>(
+          builder: (context, controller, child) {
+            if (controller.token == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return ListView(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Best Transaction Rates',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              if (controller.allBanksBestExchangeRates.isNotEmpty)
-                DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Currency')),
-                    DataColumn(label: Text('Buying')),
-                    DataColumn(label: Text('Selling')),
-                    DataColumn(label: Text('Bank')),
+            return TabBarView(
+              children: [
+                // Tab 1: Best Transaction Rates
+                ListView(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Best Transaction Rates',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (controller.allBanksBestExchangeRates.isNotEmpty)
+                      DataTable(
+                        columns: const [
+                          DataColumn(label: Text('Currency')),
+                          DataColumn(label: Text('Buying')),
+                          DataColumn(label: Text('Selling')),
+                          DataColumn(label: Text('Bank')),
+                        ],
+                        rows: controller.allBanksBestExchangeRates
+                            .map<DataRow>((item) {
+                          return DataRow(cells: [
+                            DataCell(Text(item['currency'])),
+                            DataCell(Text(item['buying']['value'].toString())),
+                            DataCell(Text(item['selling']['value'].toString())),
+                            DataCell(Text(item['selling']['bank'])),
+                          ]);
+                        }).toList(),
+                      ),
                   ],
-                  rows:
-                      controller.allBanksBestExchangeRates.map<DataRow>((item) {
-                    return DataRow(cells: [
-                      DataCell(Text(item['currency'])),
-                      DataCell(Text(item['buying']['value'].toString())),
-                      DataCell(Text(item['selling']['value'].toString())),
-                      DataCell(Text(item['selling']['bank'])),
-                    ]);
-                  }).toList(),
-                ),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'All Banks Exchange Rates',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              if (controller.allBankExchangeRates.isNotEmpty)
+                ), // Tab 2: All Banks Exchange Rates
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: controller.allBankExchangeRates.length,
@@ -107,9 +113,10 @@ class ExchangeRateView extends StatelessWidget {
                     );
                   },
                 ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
