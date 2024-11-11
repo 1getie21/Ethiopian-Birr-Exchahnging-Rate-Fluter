@@ -8,14 +8,16 @@ class ExchangeRateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 4, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Exchange Rates'),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'Best Rates'),
-              Tab(text: 'All Banks Rates'),
+              Tab(text: 'Exchange Rate'),
+              Tab(text: 'News'),
+              Tab(text: 'AboutUs'),
+              Tab(text: 'Contact'),
             ],
           ),
         ),
@@ -37,7 +39,8 @@ class ExchangeRateView extends StatelessWidget {
                             padding: EdgeInsets.all(16.0),
                             child: Text(
                               'Best Transaction Rates',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ),
                           if (controller.allBanksBestExchangeRates.isNotEmpty)
@@ -48,11 +51,14 @@ class ExchangeRateView extends StatelessWidget {
                                 DataColumn(label: Text('Selling')),
                                 DataColumn(label: Text('Bank')),
                               ],
-                              rows: controller.allBanksBestExchangeRates.map<DataRow>((item) {
+                              rows: controller.allBanksBestExchangeRates
+                                  .map<DataRow>((item) {
                                 return DataRow(cells: [
                                   DataCell(Text(item['currency'])),
-                                  DataCell(Text(item['buying']['value'].toString())),
-                                  DataCell(Text(item['selling']['value'].toString())),
+                                  DataCell(
+                                      Text(item['buying']['value'].toString())),
+                                  DataCell(Text(
+                                      item['selling']['value'].toString())),
                                   DataCell(Text(item['selling']['bank'])),
                                 ]);
                               }).toList(),
@@ -67,7 +73,8 @@ class ExchangeRateView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final item = controller.allBankExchangeRates[index];
                           return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
@@ -84,7 +91,8 @@ class ExchangeRateView extends StatelessWidget {
                                       Text(
                                         '${item['bank_name']} (${item['bank_id']}) Transaction Rate',
                                         style: const TextStyle(
-                                            fontSize: 18, fontWeight: FontWeight.bold),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -96,12 +104,17 @@ class ExchangeRateView extends StatelessWidget {
                                       DataColumn(label: Text('Selling')),
                                       DataColumn(label: Text('Spread')),
                                     ],
-                                    rows: (item['rate'] as List).map<DataRow>((rate) {
-                                      final spread = (rate['selling'] - rate['buying']).toString();
+                                    rows: (item['rate'] as List)
+                                        .map<DataRow>((rate) {
+                                      final spread =
+                                          (rate['selling'] - rate['buying'])
+                                              .toString();
                                       return DataRow(cells: [
                                         DataCell(Text(rate['base'])),
-                                        DataCell(Text(rate['buying'].toString())),
-                                        DataCell(Text(rate['selling'].toString())),
+                                        DataCell(
+                                            Text(rate['buying'].toString())),
+                                        DataCell(
+                                            Text(rate['selling'].toString())),
                                         DataCell(Text(spread)),
                                       ]);
                                     }).toList(),
@@ -120,17 +133,18 @@ class ExchangeRateView extends StatelessWidget {
 
             // Footer
             Container(
-              color: Colors.grey[200],
+              color: Colors.blue,
+              width: double.infinity,
               padding: const EdgeInsets.all(16.0),
               child: const Column(
                 children: [
                   Text(
-                    'Exchange Rate Data © 2024',
+                    'Ethiopian Exchange Rate Data © 2024',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Powered by Your Exchange API',
+                    ' ',
                     style: TextStyle(fontSize: 14),
                   ),
                 ],
