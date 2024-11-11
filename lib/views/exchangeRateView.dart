@@ -85,7 +85,7 @@ class _ExchangeRateViewState extends State<ExchangeRateView>
                           controller.token == null
                               ? const Center(
                                   child:
-                                      CircularProgressIndicator()) /
+                                      CircularProgressIndicator())
                               : ListView(
                                   children: [
                                     Padding(
