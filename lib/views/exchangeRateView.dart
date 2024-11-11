@@ -83,9 +83,7 @@ class _ExchangeRateViewState extends State<ExchangeRateView>
                         children: [
                           // Tab 1: Best Transaction Rates
                           controller.token == null
-                              ? const Center(
-                                  child:
-                                      CircularProgressIndicator()) /
+                              ? const Center(child: CircularProgressIndicator())
                               : ListView(
                                   children: [
                                     Padding(
