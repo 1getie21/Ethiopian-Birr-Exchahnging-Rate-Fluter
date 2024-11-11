@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'exchangeRateController.dart';
-import 'exchangeRateView.dart';
+import 'views/exchangeRateView.dart';
 
 void main() {
   runApp(const MyApp());
