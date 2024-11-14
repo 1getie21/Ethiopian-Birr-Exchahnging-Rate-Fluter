@@ -28,12 +28,12 @@ class ExchangeRateModel {
     }
   }
 
-  // Fetch exchange rates for a specific currency
-  Future<List<dynamic>> fetchExchangeRatesForCurrency(String token, String currency) async {
+  // Fetch exchange rates using the dynamic token
+  Future<List<dynamic>> fetchExchangeRates(String token) async {
     final auth = {
       "request": {
         "bank_id": ["all"],
-        "from": [currency],  // Specify the currency dynamically
+        "from": ["all"],
         "to": "BIRR"
       }
     };
@@ -48,10 +48,9 @@ class ExchangeRateModel {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['rates'] ?? []; // Return the rates if available
+      return json.decode(response.body);
     } else {
-      throw Exception("Failed to load exchange rates for $currency");
+      throw Exception("Failed to load exchange rates");
     }
   }
 
@@ -65,8 +64,7 @@ class ExchangeRateModel {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['rates'] ?? []; // Return the rates if available
+      return json.decode(response.body);
     } else {
       throw Exception("Failed to load best exchange rates");
     }
