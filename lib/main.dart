@@ -32,13 +32,13 @@ class ExchangeRateScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
+              const Row(
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 20,
                   ),
-                  SizedBox(width: 8),
+                  SizedBox(width: 10),
                   Text(
                     "Today Exchange Rate",
                     style: TextStyle(
@@ -49,34 +49,47 @@ class ExchangeRateScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Currency buttons row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _currencyButton("USD", true),
-                  _currencyButton("EURO"),
-                  _currencyButton("GBP"),
-                  _currencyButton("AED"),
-                  _currencyButton("YUAN"),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _currencyButton("USD", true),
+                    const SizedBox(width: 8),
+                    _currencyButton("EURO"),
+                    const SizedBox(width: 8),
+                    _currencyButton("GBP"),
+                    const SizedBox(width: 8),
+                    _currencyButton("AED"),
+                    const SizedBox(width: 8),
+                    _currencyButton("YUAN"),
+                  ],
+                ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Table header
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _headerText("BUYING"),
-                  _headerText("SELLING"),
-                  _headerText("CHANGE"),
+                  Expanded(flex: 3, child: _headerText("BANK")),
+                  Expanded(flex: 2, child: _headerText("BUYING")),
+                  Expanded(flex: 2, child: _headerText("SELLING")),
+                  Expanded(flex: 1, child: _headerText("CHANGE")),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
 
               // Bank data rows
-              for (var bank in banks) _bankRow(bank),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: banks.length,
+                  itemBuilder: (context, index) {
+                    return _bankRow(banks[index]);
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -86,7 +99,7 @@ class ExchangeRateScreen extends StatelessWidget {
 
   Widget _currencyButton(String text, [bool selected = false]) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         color: selected ? Colors.purple[300] : Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
@@ -102,48 +115,63 @@ class ExchangeRateScreen extends StatelessWidget {
   }
 
   Widget _headerText(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
+    return Center(
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
     );
-  }Widget _bankRow(Map<String, String> bank) {
-    return Padding(
+  }
+
+  Widget _bankRow(Map<String, String> bank) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.blue[900],
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Bank name
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                bank['name']!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            child: Text(
-              bank['name']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                bank['buying']!,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
-          // Buying rate
-          Container(
-            padding: EdgeInsets.all(8),
-            color: Colors.grey[300],
-            child: Text(bank['buying']!),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                bank['selling']!,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
           ),
-          // Selling rate
-          Container(
-            padding: EdgeInsets.all(8),
-            color: Colors.grey[300],
-            child: Text(bank['selling']!),
-          ),
-          // Change indicator (dummy icon)
-          Container(
-            padding: EdgeInsets.all(8),
-            color: Colors.grey[300],
-            child: Icon(Icons.show_chart, size: 16),
+          const Expanded(
+            flex: 1,
+            child: Center(
+              child: Icon(Icons.show_chart, color: Colors.white, size: 16),
+            ),
           ),
         ],
       ),
