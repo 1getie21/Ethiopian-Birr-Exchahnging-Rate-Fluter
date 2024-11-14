@@ -5,15 +5,17 @@ import 'contactUsView.dart';
 import '../exchangeRateController.dart';
 import 'newsView.dart';
 
-class ExchangeRateView extends StatelessWidget {
-  const ExchangeRateView({super.key});
+class RatesView extends StatelessWidget {
+  const RatesView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exchange Rates'),
+        centerTitle: true,
         actions: [
+          // Three-dot menu for navigating to different views
           PopupMenuButton<String>(
             onSelected: (value) {
               Widget target;
@@ -30,7 +32,10 @@ class ExchangeRateView extends StatelessWidget {
                 default:
                   return;
               }
-              Navigator.push(context, MaterialPageRoute(builder: (_) => target));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => target),
+              );
             },
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'News', child: Text('News')),
@@ -40,6 +45,7 @@ class ExchangeRateView extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Colors.blue,
       body: Consumer<ExchangeRateController>(
         builder: (context, controller, _) {
           final padding = MediaQuery.of(context).size.width < 600 ? 8.0 : 16.0;
@@ -50,11 +56,10 @@ class ExchangeRateView extends StatelessWidget {
                     ? const Center(child: CircularProgressIndicator())
                     : ListView(
                   padding: EdgeInsets.all(padding),
+
+
+
                   children: [
-                    Text(
-                      'Best Transaction Rates',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
                     if (controller.allBanksBestExchangeRates.isNotEmpty)
                       DataTable(
                         columns: const [
@@ -65,21 +70,35 @@ class ExchangeRateView extends StatelessWidget {
                         ],
                         rows: controller.allBanksBestExchangeRates
                             .map<DataRow>((item) => DataRow(cells: [
-                          DataCell(Text(item['currency'])),
-                          DataCell(Text(item['buying']['value'].toString())),
-                          DataCell(Text(item['selling']['value'].toString())),
+                          DataCell(Container(
+                            color: Colors.white,
+                            width: 35,
+                            child: Text(item['currency'].toString()),
+                          )),
+                          DataCell(Container(
+                            color: Colors.white,
+                            width: 65,
+                            child: Text(item['buying']['value']
+                                .toString()),
+                          )),
+                          DataCell(Container(
+                            color: Colors.white,
+                            width: 65,
+                            child: Text(item['selling']['value']
+                                .toString()),
+                          )),
                           DataCell(Text(item['selling']['bank'])),
                         ]))
                             .toList(),
                       ),
+                    Container(
+                      color: Colors.blue,
+                      padding: EdgeInsets.all(padding),
+                      width: double.infinity,
+                      child: const Center(child: Text('Ethiopian Exchange Rate Data © 2024')),
+                    ),
                   ],
                 ),
-              ),
-              Container(
-                color: Colors.blue,
-                padding: EdgeInsets.all(padding),
-                width: double.infinity,
-                child: const Center(child: Text('Ethiopian Exchange Rate Data © 2024')),
               ),
             ],
           );
