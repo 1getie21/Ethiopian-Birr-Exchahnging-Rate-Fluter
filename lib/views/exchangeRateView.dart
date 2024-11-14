@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../exchangeRateController.dart';
 
-class ExchangeRateView extends StatelessWidget {
+class ExchangeRateView extends StatefulWidget {
   const ExchangeRateView({super.key});
 
+  @override
+  _ExchangeRateViewState createState() => _ExchangeRateViewState();
+}
+
+class _ExchangeRateViewState extends State<ExchangeRateView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
