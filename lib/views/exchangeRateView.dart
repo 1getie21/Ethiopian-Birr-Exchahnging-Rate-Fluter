@@ -9,60 +9,91 @@ class ExchangeRateView extends StatefulWidget {
   _ExchangeRateViewState createState() => _ExchangeRateViewState();
 }
 
-class _ExchangeRateViewState extends State<ExchangeRateView> {
+class _ExchangeRateViewState extends State<ExchangeRateView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ExchangeRateController>(context, listen: false)
+          .fetchExchangeRatesTest();
+
+      // Provider.of<ExchangeRateController>(context, listen: false)
+      //     .fetchExchangeRates();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Exchange Rates'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (currency) {
-              Provider.of<ExchangeRateController>(context, listen: false)
-                  .updateSelectedCurrency(currency);
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'USD', child: Text('USD')),
-              PopupMenuItem(value: 'EURO', child: Text('EURO')),
-              PopupMenuItem(value: 'GBP', child: Text('GBP')),
-              PopupMenuItem(value: 'AED', child: Text('AED')),
-              PopupMenuItem(value: 'YUAN', child: Text('YUAN')),
-            ],
-          ),
-        ],
+        title: const Text('Ethiopian Exchange Rates'),
+        centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'USD'),
+            Tab(text: 'EUR'),
+            Tab(text: 'GBP'),
+          ],
+          onTap: (index) {
+            String selectedCurrency = ['USD', 'EUR', 'GBP'][index];
+            Provider.of<ExchangeRateController>(context, listen: false)
+                .updateSelectedCurrency(selectedCurrency);
+          },
+        ),
       ),
+
+      backgroundColor: Colors.blue,
       body: Consumer<ExchangeRateController>(
         builder: (context, controller, _) {
-          return controller.token == null
-              ? const Center(child: CircularProgressIndicator())
-              : ListView(
-            padding: const EdgeInsets.all(16),
+          return TabBarView(
+            controller: _tabController,
             children: [
-              Text(
-                'Exchange Rates for ${controller.selectedCurrency}',
-                style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              DataTable(
-                columns: const [
-                  DataColumn(label: Text('Bank')),
-                  DataColumn(label: Text('Buying')),
-                  DataColumn(label: Text('Selling')),
-                  DataColumn(label: Text('Change')),
-                ],
-                rows: controller.filteredExchangeRates.map<DataRow>((item) {
-                  return DataRow(cells: [
-                    DataCell(Text(item['bank'] ?? 'N/A')),
-                    DataCell(Text(item['buying']['value'].toString())),
-                    DataCell(Text(item['selling']['value'].toString())),
-                    DataCell(Text(item['change'] ?? 'N/A')),
-                  ]);
-                }).toList(),
-              ),
+              _buildExchangeRateTable(controller),
+              _buildExchangeRateTable(controller),
+              _buildExchangeRateTable(controller),
             ],
           );
         },
       ),
     );
+  }
+
+  Widget _buildExchangeRateTable(ExchangeRateController controller) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        DataTable(
+          columns: const [
+            DataColumn(label: Text('Bank')),
+            DataColumn(label: Text('Buying')),
+            DataColumn(label: Text('Selling')),
+          ],
+          rows: controller.filteredExchangeRates.map<DataRow>((bank) {
+            return DataRow(
+              cells: [
+                // DataCell(Text(bank['bank'])),
+                // DataCell(Text(bank['rates'][0]['buying'].toString())),
+                // DataCell(Text(bank['rates'][0]['selling'].toString())),
+
+                DataCell(Container(color: Colors.white, child: Text(bank['bank']))),
+                DataCell(Container(color: Colors.white, child: Text(bank['rates'][0]['buying'].toString()))),
+                DataCell(Container(color: Colors.white, child: Text(bank['rates'][0]['selling'].toString()))),
+              ],
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

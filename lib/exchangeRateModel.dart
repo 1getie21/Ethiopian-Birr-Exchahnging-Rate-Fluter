@@ -1,16 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// Model to handle exchange rate data
 class ExchangeRateModel {
   static const String liveUrl = "http://10.10.10.231:5000/v1";
+  static const String test = 'http://localhost:8080/rates';
 
-  // Login method to fetch token
   Future<String?> login() async {
-    final auth = {
-      "password": "test123",
-      "email": "test3@wisetech.et"
-    };
+    final auth = {"password": "test123", "email": "test3@wisetech.et"};
 
     final response = await http.post(
       Uri.parse('$liveUrl/users/login'),
@@ -22,7 +18,7 @@ class ExchangeRateModel {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return data['token'];  // Return the token
+      return data['token']; // Return the token
     } else {
       return null;
     }
@@ -42,27 +38,35 @@ class ExchangeRateModel {
       Uri.parse('$liveUrl/forex/latest'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token,  // Use the token dynamically
+        'Authorization': token, // Use the token dynamically
       },
       body: json.encode(auth),
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return json.decode(response as String);
     } else {
       throw Exception("Failed to load exchange rates");
     }
   }
 
-  // Fetch best exchange rates using the dynamic token
   Future<List<dynamic>> fetchBestExchangeRates(String token) async {
     final response = await http.get(
       Uri.parse('$liveUrl/forex/best'),
       headers: {
-        'Authorization': token,  // Use the token dynamically
+        'Authorization': token, // Use the token dynamically
       },
     );
 
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception("Failed to load best exchange rates");
+    }
+  }
+
+  Future<List<dynamic>> fetchBestExchangeRatesTest() async {
+    final response = await http.get(Uri.parse(test));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
