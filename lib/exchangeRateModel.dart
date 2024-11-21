@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ExchangeRateModel {
   static const String liveUrl = "http://10.10.10.231:5000/v1";
-  static const String test = 'http://localhost:8080/rates';
+  Uri test = Uri.parse('http://10.0.2.2:8080/rates');
 
   Future<String?> login() async {
     final auth = {"password": "test123", "email": "test3@wisetech.et"};
@@ -66,7 +66,7 @@ class ExchangeRateModel {
   }
 
   Future<List<dynamic>> fetchBestExchangeRatesTest() async {
-    final response = await http.get(Uri.parse(test));
+    final response = await http.get(test);
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
